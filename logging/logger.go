@@ -19,26 +19,30 @@ const (
 )
 
 const (
-	PROJECT = "thymed"
-	SERVICE = "front-controller-api"
-)
-
-const (
+	// #nosec G101 -- Not a secret
 	TraceToken = "X-Trace-Token"
 )
 
-// Version to be filled in by the user
-var Version string
+// To be filled in by the user
+var (
+	Version string
+	Project string
+	Service string
+)
 
 var globalLogger *zap.Logger
 var standardFields = zap.Fields(
-	zap.String("project", PROJECT),
-	zap.String("service", SERVICE),
+	zap.String("project", Project),
+	zap.String("service", Service),
 	zap.String("version", Version),
 	zap.String("environment", getEnv()),
 )
 
-func init() {
+func InitLogger(version, project, service string) {
+	Version = version
+	Project = project
+	Service = service
+
 	zapConfig := zap.NewProductionConfig()
 	zapConfig.Level = zap.NewAtomicLevelAt(zap.DebugLevel)
 	zapConfig.EncoderConfig.TimeKey = "time"
