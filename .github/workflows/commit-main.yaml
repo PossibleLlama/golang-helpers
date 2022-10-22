@@ -1,0 +1,21 @@
+name: "On commit to main"
+
+on:
+  workflow_run:
+    workflows: ["On commit", "Security scans"]
+    branches: [main]
+    types: [completed]
+
+jobs:
+  release:
+    name: Tag
+    runs-on: ubuntu-latest
+    steps:
+
+      - name: Check out code
+        uses: actions/checkout@v3
+
+      - name: Bump version and push tag
+        uses: mathieudutour/github-tag-action@v6.0
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
