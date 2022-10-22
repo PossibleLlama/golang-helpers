@@ -9,10 +9,6 @@ import (
 )
 
 const (
-	ENV_AUTH_ENDPOINT = "APP_AUTH"
-)
-
-const (
 	HEADER_AUTH   = "Authorization"
 	JSON_ENCODING = "application/json; charset=utf-8"
 )

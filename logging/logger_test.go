@@ -14,6 +14,7 @@ const (
 )
 
 func TestLog(t *testing.T) {
+	InitLogger("v0.1.2", "proj", "svc")
 	req, err := http.NewRequest("GET", "http://testing/", nil)
 	assert.Nil(t, err)
 

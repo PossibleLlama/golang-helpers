@@ -12,4 +12,5 @@ Testing via the following:
 
 ``` bash
 gotestsum --packages="./..." -- -coverprofile="./coverage.out" -race
+go tool cover -html="./coverage.out"
 ```
