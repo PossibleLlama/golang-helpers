@@ -1,0 +1,45 @@
+name: "On commit"
+
+on: push
+
+jobs:
+  format:
+    name: Format
+    runs-on: ubuntu-latest
+    steps:
+
+    - name: Set up Go 1.x
+      uses: actions/setup-go@v3
+      with:
+        go-version: ^1.19
+
+    - name: Check out code into the Go module directory
+      uses: actions/checkout@v3
+
+    - name: Check formatting
+      run: go fmt ./...
+
+    - name: Check vet
+      run: go vet ./...
+
+  test:
+    name: Test
+    runs-on: ubuntu-latest
+    steps:
+
+    - name: Set up Go 1.x
+      uses: actions/setup-go@v3
+      with:
+        go-version: ^1.19
+
+    - name: Check out code into the Go module directory
+      uses: actions/checkout@v3
+
+    - name: Get dependencies
+      run: go mod download
+
+    - name: Install dependencies
+      run: go install gotest.tools/gotestsum@latest
+
+    - name: Test
+      run: gotestsum --packages="./..." -- -coverprofile="./coverage.out" -race
