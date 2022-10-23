@@ -23,26 +23,9 @@ const (
 	TraceToken = "X-Trace-Token"
 )
 
-// To be filled in by the user
-var (
-	Version string
-	Project string
-	Service string
-)
-
 var globalLogger *zap.Logger
-var standardFields = zap.Fields(
-	zap.String("project", Project),
-	zap.String("service", Service),
-	zap.String("version", Version),
-	zap.String("environment", getEnv()),
-)
 
 func InitLogger(version, project, service string) {
-	Version = version
-	Project = project
-	Service = service
-
 	zapConfig := zap.NewProductionConfig()
 	zapConfig.Level = zap.NewAtomicLevelAt(zap.DebugLevel)
 	zapConfig.EncoderConfig.TimeKey = "time"
@@ -52,7 +35,12 @@ func InitLogger(version, project, service string) {
 	zapConfig.EncoderConfig.EncodeDuration = zapcore.SecondsDurationEncoder
 	zapConfig.DisableStacktrace = true
 
-	zapLogger, err := zapConfig.Build(standardFields, zap.AddCallerSkip(1))
+	zapLogger, err := zapConfig.Build(zap.Fields(
+		zap.String("project", project),
+		zap.String("service", service),
+		zap.String("version", version),
+		zap.String("environment", getEnv()),
+	), zap.AddCallerSkip(1))
 
 	if err != nil {
 		fmt.Println("failed to initialize logger:", err)
