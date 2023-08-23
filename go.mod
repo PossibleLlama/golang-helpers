@@ -3,7 +3,7 @@ module github.com/PossibleLlama/golang-helpers
 go 1.21
 
 require (
-	github.com/stretchr/testify v1.8.2
+	github.com/stretchr/testify v1.8.4
 	go.uber.org/zap v1.24.0
 )
 
