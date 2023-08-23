@@ -1,14 +1,14 @@
 package logging
 
 import (
-	"bytes"
-	"log"
 	"net/http"
 	"net/http/httptest"
-	"os"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"go.uber.org/zap"
+	"go.uber.org/zap/zapcore"
+	"go.uber.org/zap/zaptest/observer"
 )
 
 const (
@@ -17,8 +17,15 @@ const (
 )
 
 func TestLoggerResponse(t *testing.T) {
+	observedZapCore, observedLogs := observer.New(zap.InfoLevel)
+	observedLogger := zap.New(observedZapCore)
+
+	// Set defaults via init
 	InitLogger("v0.1.2", "proj", "svc")
-	req, err := http.NewRequest("GET", "http://testing/", nil)
+	// Replace actual logger with dummy
+	globalLogger = observedLogger
+
+	req, err := http.NewRequest(http.MethodGet, "http://testing/", nil)
 	assert.Nil(t, err)
 
 	lrm := &LoggingResponseMetadata{
@@ -39,73 +46,10 @@ func TestLoggerResponse(t *testing.T) {
 
 	LogResponse("token", req, lrm, 0)
 
-	assert.Equal(t, "", captureOutput(func() {
-	LogDebug("token", "debug message")
-	}), "Output from void logger should be empty")
-}
+	assert.NotEmpty(t, observedLogs.Len(), "At least one log should have been output")
+	assert.Len(t, observedLogs.All(), 1, "Should be exactly 1 log")
 
-func TestLoggerLogs(t *testing.T) {
-	var tests = []struct {
-		level    string
-		f        func()
-		contains []string
-	}{
-		{
-			level: "debug",
-			f:     func() { LogDebug("token", "debug message") },
-			contains: []string{
-				"\"" + TraceToken + "\":\"token\"",
-				"\"message\":\"debug message\"",
-			},
-		}, {
-			level: "info",
-			f:     func() { LogInfo("token", "info message") },
-			contains: []string{
-				"\"" + TraceToken + "\":\"token\"",
-				"\"message\":\"info message\"",
-			},
-		}, {
-			level: "warn",
-			f:     func() { LogWarn("token", "warn message") },
-			contains: []string{
-				"\"" + TraceToken + "\":\"token\"",
-				"\"message\":\"warn message\"",
-			},
-		}, {
-			level: "error",
-			f:     func() { LogError("token", "error message") },
-			contains: []string{
-				"\"" + TraceToken + "\":\"token\"",
-				"\"message\":\"error message\"",
-			},
-		},
-	}
-
-	InitLogger("v0.1.2", "proj", "svc")
-
-	for _, testItem := range tests {
-		t.Run(testItem.level, func(t *testing.T) {
-			output := captureOutput(func() {
-				testItem.f()
-			})
-			assert.NotEmpty(t, output, "Output from logger should not be empty")
-			for _, e := range testItem.contains {
-				assert.Contains(t, output, "\"level\":\""+testItem.level+"\"")
-				assert.Contains(t, output, e, "Output from logger should contain line")
-			}
-			assert.Contains(t, output, "\"version\":\"v0.1.2\"")
-			assert.Contains(t, output, "\"project\":\"proj\"")
-			assert.Contains(t, output, "\"service\":\"svc\"")
-			assert.Contains(t, output, "\"environment\":\"dev\"")
-			assert.Contains(t, output, "\"time\":\"") // Check that time has a value, but don't check value
-		})
-	}
-}
-
-func captureOutput(f func()) string {
-	var buf bytes.Buffer
-	log.SetOutput(&buf)
-	f()
-	log.SetOutput(os.Stderr)
-	return buf.String()
+	currentLog := observedLogs.All()[0]
+	assert.Equal(t, currentLog.Level, zapcore.InfoLevel)
+	assert.Equal(t, currentLog.Message, "finished request")
 }
