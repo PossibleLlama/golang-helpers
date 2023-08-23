@@ -25,7 +25,7 @@ const (
 
 var globalLogger *zap.Logger
 
-func InitLogger(version, project, service string, outputs []string) {
+func InitLogger(version, project, service string) {
 	zapConfig := zap.NewProductionConfig()
 	zapConfig.Level = zap.NewAtomicLevelAt(zap.DebugLevel)
 	zapConfig.Encoding = "json"
@@ -35,7 +35,7 @@ func InitLogger(version, project, service string, outputs []string) {
 	zapConfig.EncoderConfig.MessageKey = "message"
 	zapConfig.EncoderConfig.EncodeDuration = zapcore.SecondsDurationEncoder
 	zapConfig.DisableStacktrace = true
-	zapConfig.OutputPaths = outputs
+	zapConfig.OutputPaths = []string{"stdout"}
 
 	zapLogger, err := zapConfig.Build(zap.Fields(
 		zap.String("project", project),
