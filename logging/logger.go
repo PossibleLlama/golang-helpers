@@ -25,15 +25,17 @@ const (
 
 var globalLogger *zap.Logger
 
-func InitLogger(version, project, service string) {
+func InitLogger(version, project, service string, outputs []string) {
 	zapConfig := zap.NewProductionConfig()
 	zapConfig.Level = zap.NewAtomicLevelAt(zap.DebugLevel)
+	zapConfig.Encoding = "json"
 	zapConfig.EncoderConfig.TimeKey = "time"
 	zapConfig.EncoderConfig.EncodeTime = zapcore.RFC3339TimeEncoder
 	zapConfig.EncoderConfig.EncodeLevel = zapcore.LowercaseLevelEncoder
 	zapConfig.EncoderConfig.MessageKey = "message"
 	zapConfig.EncoderConfig.EncodeDuration = zapcore.SecondsDurationEncoder
 	zapConfig.DisableStacktrace = true
+	zapConfig.OutputPaths = outputs
 
 	zapLogger, err := zapConfig.Build(zap.Fields(
 		zap.String("project", project),

@@ -11,6 +11,6 @@ go get github.com/PossibleLlama/golang-helpers
 Testing via the following:
 
 ``` bash
-gotestsum --packages="./..." -- -coverprofile="./coverage.out" -race
+gotestsum --packages="./..." -- -coverprofile="./coverage.out" -count=10 -race
 go tool cover -html="./coverage.out"
 ```
