@@ -17,7 +17,7 @@ const (
 )
 
 func TestLoggerResponse(t *testing.T) {
-	observedZapCore, observedLogs := observer.New(zap.InfoLevel)
+	observedZapCore, observedLogs := observer.New(zap.DebugLevel)
 	observedLogger := zap.New(observedZapCore)
 
 	// Set defaults via init
@@ -61,6 +61,10 @@ func TestLoggerLogs(t *testing.T) {
 		level zapcore.Level
 	}{
 		{
+			name:  "debug logging",
+			f:     func() { LogDebug("a", "b") },
+			level: zapcore.DebugLevel,
+		}, {
 			name:  "info logging",
 			f:     func() { LogInfo("a", "b") },
 			level: zapcore.InfoLevel,
@@ -76,27 +80,45 @@ func TestLoggerLogs(t *testing.T) {
 	}
 
 	for _, testItem := range tests {
-	observedZapCore, observedLogs := observer.New(zap.InfoLevel)
-	observedLogger := zap.New(observedZapCore)
+		observedZapCore, observedLogs := observer.New(zap.DebugLevel)
+		observedLogger := zap.New(observedZapCore)
 
-	// Set defaults via init
-	InitLogger("v0.1.2", "proj", "svc")
-	// Replace actual logger with dummy
-	globalLogger = observedLogger
+		// Set defaults via init
+		InitLogger("v0.1.2", "proj", "svc")
+		// Replace actual logger with dummy
+		globalLogger = observedLogger
 
 		t.Run(testItem.name, func(t *testing.T) {
-	assert.Empty(t, observedLogs.Len(), "Before logging, there should be no lines")
+			assert.Empty(t, observedLogs.Len(), "Before logging, there should be no lines")
 
 			testItem.f()
 
-	assert.NotEmpty(t, observedLogs.Len(), "At least one log should have been output")
-	assert.Len(t, observedLogs.All(), 1, "There should be exactly one log per ran test")
-	currentLog := observedLogs.All()[0]
+			assert.NotEmpty(t, observedLogs.Len(), "At least one log should have been output")
+			assert.Len(t, observedLogs.All(), 1, "There should be exactly one log per ran test")
+			currentLog := observedLogs.All()[0]
 
-	assert.NotEmpty(t, currentLog.Message, "Output from logger should not be empty")
+			assert.NotEmpty(t, currentLog.Message, "Output from logger should not be empty")
 
 			assert.Equal(t, currentLog.Level, testItem.level, "Output from logger should be at the correct level")
-	assert.Equal(t, currentLog.Message, "b", "Output from logger should contain line")
+			assert.Equal(t, currentLog.Message, "b", "Output from logger should contain line")
 		})
 	}
+}
+
+func TestLogEnablesAllLevelsOfLogs(t *testing.T) {
+	// Set defaults via init
+	InitLogger("v0.1.2", "proj", "svc")
+
+	assert.True(t, globalLogger.Level().Enabled(zapcore.DebugLevel), "Logger should produce debug messages")
+	assert.True(t, globalLogger.Level().Enabled(zapcore.ErrorLevel), "Logger should produce error messages")
+	assert.True(t, globalLogger.Level().Enabled(zapcore.FatalLevel), "Logger should produce fatal messages")
+}
+
+func TestQuietLogGivesLimitedLogs(t *testing.T) {
+	// Set defaults via init
+	InitQuietLogger()
+
+	assert.False(t, globalLogger.Level().Enabled(zapcore.DebugLevel), "Quiet logger should not produce debug messages")
+	assert.False(t, globalLogger.Level().Enabled(zapcore.ErrorLevel), "Quiet logger should not produce error messages")
+	assert.True(t, globalLogger.Level().Enabled(zapcore.FatalLevel), "Quiet logger should produce fatal messages")
 }
