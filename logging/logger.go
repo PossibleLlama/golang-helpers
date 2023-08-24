@@ -26,8 +26,16 @@ const (
 var globalLogger *zap.Logger
 
 func InitLogger(version, project, service string) {
+	initLogger(zapcore.DebugLevel, version, project, service)
+}
+
+func InitQuietLogger() {
+	initLogger(zapcore.FatalLevel, "version", "project", "service")
+}
+
+func initLogger(level zapcore.Level, version, project, service string) {
 	zapConfig := zap.NewProductionConfig()
-	zapConfig.Level = zap.NewAtomicLevelAt(zap.DebugLevel)
+	zapConfig.Level = zap.NewAtomicLevelAt(level)
 	zapConfig.Encoding = "json"
 	zapConfig.EncoderConfig.TimeKey = "time"
 	zapConfig.EncoderConfig.EncodeTime = zapcore.RFC3339TimeEncoder
