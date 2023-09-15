@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"os"
 	"strconv"
+	"strings"
 	"time"
 
 	"go.uber.org/zap"
@@ -44,6 +45,7 @@ func initLogger(level zapcore.Level, version, project, service string) {
 	zapConfig.EncoderConfig.EncodeDuration = zapcore.SecondsDurationEncoder
 	zapConfig.DisableStacktrace = true
 	zapConfig.OutputPaths = []string{"stdout"}
+	zapConfig.EncoderConfig.EncodeCaller = remoteSourceCallerEncoder
 
 	zapLogger, err := zapConfig.Build(zap.Fields(
 		zap.String("project", project),
@@ -67,6 +69,17 @@ func getEnv() string {
 		env = ENV_DEV
 	}
 	return env
+}
+
+func remoteSourceCallerEncoder(caller zapcore.EntryCaller, enc zapcore.PrimitiveArrayEncoder) {
+	s := strings.Split(caller.File, "github")
+	if len(s) > 1 {
+		e := strings.Split(s[1], "/")
+		f := e[len(e)-1]
+		e = e[0 : len(e)-1]
+		enc.AppendString("https://github.com" + strings.Join(e, "/") + "/blob/main/" + f + "#L" + strconv.Itoa(caller.Line))
+	}
+	zapcore.ShortCallerEncoder(zapcore.EntryCaller{}, enc)
 }
 
 func withTrace(token string) *zap.Logger {
