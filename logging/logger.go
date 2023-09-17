@@ -79,7 +79,6 @@ func remoteSourceCallerEncoder(caller zapcore.EntryCaller, enc zapcore.Primitive
 		e = e[0 : len(e)-1]
 		enc.AppendString("https://github.com" + strings.Join(e, "/") + "/blob/main/" + f + "#L" + strconv.Itoa(caller.Line))
 	}
-	zapcore.ShortCallerEncoder(zapcore.EntryCaller{}, enc)
 }
 
 func withTrace(token string) *zap.Logger {
