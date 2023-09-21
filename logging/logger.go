@@ -26,14 +26,17 @@ const (
 
 var globalLogger *zap.Logger
 var commitSha string
+var orgAndRepo string
 
-func InitLogger(version, project, service string) {
+func InitLogger(version, project, service, orgAndRepo string) {
 	commitSha = version
+	orgAndRepo = orgAndRepo
 	initLogger(zapcore.DebugLevel, project, service)
 }
 
 func InitQuietLogger() {
 	commitSha = "version"
+	orgAndRepo = ""
 	initLogger(zapcore.FatalLevel, "project", "service")
 }
 
@@ -76,20 +79,20 @@ func getEnv() string {
 
 func remoteSourceCallerEncoder(caller zapcore.EntryCaller, enc zapcore.PrimitiveArrayEncoder) {
 	var link string
-	if link = githubLinkOrEmpty(caller.File); len(link) == 0 {
+	if link = linkOrEmpty(caller.File); len(link) == 0 {
 		zapcore.ShortCallerEncoder(caller, enc)
 	} else {
 		enc.AppendString(link + "#L" + strconv.Itoa(caller.Line))
 	}
 }
 
-func githubLinkOrEmpty(input string) string {
-	gh := strings.SplitAfter(input, "github")
+func linkOrEmpty(input string) string {
+	scm := strings.SplitAfter(input, "github")
 	// Should contain /path/github/restOfPath
-	if len(gh) <= 1 || len(gh[1]) == 0 {
+	if len(scm) <= 1 || len(scm[1]) == 0 {
 		return ""
 	}
-	path := strings.Split(gh[1], "/")
+	path := strings.Split(scm[1], "/")
 	// Should contain /org/repository/file
 	// if not, this won't link to the correct place
 	if len(path) <= 3 {
@@ -102,9 +105,11 @@ func githubLinkOrEmpty(input string) string {
 		linkLocation = commitSha
 	}
 
-	orgAndRepo := strings.Join(path[0:3], "/")
+	if orgAndRepo == "" {
+		orgAndRepo = strings.TrimLeft(strings.Join(path[0:3], "/"), "/")
+	}
 	pathToFile := strings.Join(path[3:], "/")
-	return "https://github.com" + orgAndRepo + "/blob/" + linkLocation + "/" + pathToFile
+	return "https://github.com/" + orgAndRepo + "/blob/" + linkLocation + "/" + pathToFile
 }
 
 func withTrace(token string) *zap.Logger {
