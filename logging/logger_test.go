@@ -125,97 +125,67 @@ func TestQuietLogGivesLimitedLogs(t *testing.T) {
 
 func TestLinkOrEmpty(t *testing.T) {
 	var tests = []struct {
-		name              string
-		commit            string
-		defaultOrgAndRepo string
-		input             string
-		expect            string
+		name    string
+		commit  string
+		scmLink string
+		input   string
+		expect  string
 	}{
 		{
-			name:              "Empty gives empty",
-			commit:            "",
-			defaultOrgAndRepo: "",
-			input:             "",
-			expect:            "",
+			name:    "Empty gives empty",
+			commit:  "",
+			scmLink: "",
+			input:   "",
+			expect:  "",
 		}, {
-			name:              "Foo gives empty",
-			commit:            "",
-			defaultOrgAndRepo: "",
-			input:             "foo",
-			expect:            "",
+			name:    "Empty scm gives empty",
+			commit:  "",
+			scmLink: "",
+			input:   "foo",
+			expect:  "",
 		}, {
-			name:              "github gives empty",
-			commit:            "",
-			defaultOrgAndRepo: "",
-			input:             "github",
-			expect:            "",
+			name:    "Empty input gives empty",
+			commit:  "",
+			scmLink: "foo",
+			input:   "",
+			expect:  "",
 		}, {
-			name:              "foo/github gives empty",
-			commit:            "",
-			defaultOrgAndRepo: "",
-			input:             "foo/github",
-			expect:            "",
+			name:    "Scm and single file path input gives output to main branch",
+			commit:  "",
+			scmLink: "foo",
+			input:   "repoName",
+			expect:  "foo/blob/main/",
 		}, {
-			name:              "foo/bar/github gives empty",
-			commit:            "",
-			defaultOrgAndRepo: "",
-			input:             "foo/bar/github",
-			expect:            "",
+			name:    "Scm and multiple file path input gives output to main branch",
+			commit:  "",
+			scmLink: "foo",
+			input:   "repoName/bar",
+			expect:  "foo/blob/main/bar",
 		}, {
-			name:              "/foo/github gives empty",
-			commit:            "",
-			defaultOrgAndRepo: "",
-			input:             "/foo/github",
-			expect:            "",
+			name:    "Scm, commit and single file path input gives output to commit",
+			commit:  "abc123",
+			scmLink: "foo",
+			input:   "repoName",
+			expect:  "foo/blob/abc123/",
 		}, {
-			name:              "/foo/bar/github gives empty",
-			commit:            "",
-			defaultOrgAndRepo: "",
-			input:             "/foo/bar/github",
-			expect:            "",
+			name:    "Scm, commit and multiple file path input gives output to commit",
+			commit:  "abc123",
+			scmLink: "foo",
+			input:   "repoName/bar",
+			expect:  "foo/blob/abc123/bar",
 		}, {
-			name:              "github/org gives empty",
-			commit:            "",
-			defaultOrgAndRepo: "",
-			input:             "github/foo",
-			expect:            "",
-		}, {
-			name:              "github/org/repo gives empty",
-			commit:            "",
-			defaultOrgAndRepo: "",
-			input:             "github/org/repo",
-			expect:            "",
-		}, {
-			name:              "github/org/repo/file without commit gives link to main branch",
-			commit:            "",
-			defaultOrgAndRepo: "",
-			input:             "github/org/repo/file",
-			expect:            "https://github.com/org/repo/blob/main/file",
-		}, {
-			name:              "github/org/repo/file with commit gives link to specific commit",
-			commit:            "abc",
-			defaultOrgAndRepo: "",
-			input:             "github/org/repo/file",
-			expect:            "https://github.com/org/repo/blob/abc/file",
-		}, {
-			name:              "override org and repo without commit gives link to main branch",
-			commit:            "",
-			defaultOrgAndRepo: "foo/bar",
-			input:             "github/org/repo/file",
-			expect:            "https://github.com/foo/bar/blob/main/file",
-		}, {
-			name:              "override org and repo with commit gives link to specific commit",
-			commit:            "abc",
-			defaultOrgAndRepo: "foo/bar",
-			input:             "github/org/repo/file",
-			expect:            "https://github.com/foo/bar/blob/abc/file",
+			name:    "Scm and multiple file path with line input gives output to main branch without line",
+			commit:  "",
+			scmLink: "foo",
+			input:   "repoName/bar:123",
+			expect:  "foo/blob/main/bar",
 		},
 	}
 
 	for _, testItem := range tests {
 		t.Run(testItem.name, func(t *testing.T) {
 			commitSha = testItem.commit
-			orgAndRepo = testItem.defaultOrgAndRepo
+			scmLink = testItem.scmLink
 			actual := linkOrEmpty(testItem.input)
 
 			assert.Equal(t, testItem.expect, actual)
