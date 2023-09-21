@@ -25,16 +25,19 @@ const (
 )
 
 var globalLogger *zap.Logger
+var commitSha string
 
 func InitLogger(version, project, service string) {
-	initLogger(zapcore.DebugLevel, version, project, service)
+	commitSha = version
+	initLogger(zapcore.DebugLevel, project, service)
 }
 
 func InitQuietLogger() {
-	initLogger(zapcore.FatalLevel, "version", "project", "service")
+	commitSha = "version"
+	initLogger(zapcore.FatalLevel, "project", "service")
 }
 
-func initLogger(level zapcore.Level, version, project, service string) {
+func initLogger(level zapcore.Level, project, service string) {
 	zapConfig := zap.NewProductionConfig()
 	zapConfig.Level = zap.NewAtomicLevelAt(level)
 	zapConfig.Encoding = "json"
@@ -50,7 +53,7 @@ func initLogger(level zapcore.Level, version, project, service string) {
 	zapLogger, err := zapConfig.Build(zap.Fields(
 		zap.String("project", project),
 		zap.String("service", service),
-		zap.String("version", version),
+		zap.String("version", commitSha),
 		zap.String("environment", getEnv()),
 	), zap.AddCallerSkip(1))
 
@@ -72,13 +75,36 @@ func getEnv() string {
 }
 
 func remoteSourceCallerEncoder(caller zapcore.EntryCaller, enc zapcore.PrimitiveArrayEncoder) {
-	s := strings.Split(caller.File, "github")
-	if len(s) > 1 {
-		e := strings.Split(s[1], "/")
-		f := e[len(e)-1]
-		e = e[0 : len(e)-1]
-		enc.AppendString("https://github.com" + strings.Join(e, "/") + "/blob/main/" + f + "#L" + strconv.Itoa(caller.Line))
+	var link string
+	if link = githubLinkOrEmpty(caller.File); len(link) == 0 {
+		zapcore.ShortCallerEncoder(caller, enc)
+	} else {
+		enc.AppendString(link + "#L" + strconv.Itoa(caller.Line))
 	}
+}
+
+func githubLinkOrEmpty(input string) string {
+	gh := strings.SplitAfter(input, "github")
+	// Should contain /path/github/restOfPath
+	if len(gh) <= 1 || len(gh[1]) == 0 {
+		return ""
+	}
+	path := strings.Split(gh[1], "/")
+	// Should contain /org/repository/file
+	// if not, this won't link to the correct place
+	if len(path) <= 3 {
+		return ""
+	}
+	var linkLocation string
+	if commitSha == "" {
+		linkLocation = "main"
+	} else {
+		linkLocation = commitSha
+	}
+
+	orgAndRepo := strings.Join(path[0:3], "/")
+	pathToFile := strings.Join(path[3:], "/")
+	return "https://github.com" + orgAndRepo + "/blob/" + linkLocation + "/" + pathToFile
 }
 
 func withTrace(token string) *zap.Logger {
