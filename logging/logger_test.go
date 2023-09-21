@@ -20,8 +20,7 @@ func TestLoggerResponse(t *testing.T) {
 	observedZapCore, observedLogs := observer.New(zap.DebugLevel)
 	observedLogger := zap.New(observedZapCore)
 
-	// Set defaults via init
-	InitLogger("v0.1.2", "proj", "svc", "org/repo")
+	NewLoggerBuilder().Build()
 	// Replace actual logger with dummy
 	globalLogger = observedLogger
 
@@ -83,8 +82,7 @@ func TestLoggerLogs(t *testing.T) {
 		observedZapCore, observedLogs := observer.New(zap.DebugLevel)
 		observedLogger := zap.New(observedZapCore)
 
-		// Set defaults via init
-		InitLogger("v0.1.2", "proj", "svc", "org/repo")
+		NewLoggerBuilder().Build()
 		// Replace actual logger with dummy
 		globalLogger = observedLogger
 
@@ -106,8 +104,7 @@ func TestLoggerLogs(t *testing.T) {
 }
 
 func TestLogEnablesAllLevelsOfLogs(t *testing.T) {
-	// Set defaults via init
-	InitLogger("v0.1.2", "proj", "svc", "org/repo")
+	NewLoggerBuilder().Build()
 
 	assert.True(t, globalLogger.Level().Enabled(zapcore.DebugLevel), "Logger should produce debug messages")
 	assert.True(t, globalLogger.Level().Enabled(zapcore.ErrorLevel), "Logger should produce error messages")
@@ -115,8 +112,7 @@ func TestLogEnablesAllLevelsOfLogs(t *testing.T) {
 }
 
 func TestQuietLogGivesLimitedLogs(t *testing.T) {
-	// Set defaults via init
-	InitQuietLogger()
+	NewLoggerBuilder().WithLogLevel(zap.PanicLevel).Build()
 
 	assert.False(t, globalLogger.Level().Enabled(zapcore.DebugLevel), "Quiet logger should not produce debug messages")
 	assert.False(t, globalLogger.Level().Enabled(zapcore.ErrorLevel), "Quiet logger should not produce error messages")
