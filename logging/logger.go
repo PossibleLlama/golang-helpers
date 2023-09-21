@@ -28,16 +28,49 @@ var globalLogger *zap.Logger
 var commitSha string
 var scmLink string
 
-func InitLogger(version, project, service, scmLinkToRepo string) {
-	commitSha = version
-	scmLink = scmLinkToRepo
-	initLogger(zapcore.DebugLevel, project, service)
+type loggerBuilder struct {
+	version       string
+	project       string
+	service       string
+	scmLinkToRepo string
+	logLevel      zapcore.Level
 }
 
-func InitQuietLogger() {
-	commitSha = "version"
-	scmLink = ""
-	initLogger(zapcore.FatalLevel, "project", "service")
+func NewLoggerBuilder() *loggerBuilder {
+	return &loggerBuilder{
+		logLevel: zapcore.DebugLevel,
+	}
+}
+
+func (b *loggerBuilder) WithVersion(v string) *loggerBuilder {
+	b.version = v
+	return b
+}
+
+func (b *loggerBuilder) WithProject(p string) *loggerBuilder {
+	b.project = p
+	return b
+}
+
+func (b *loggerBuilder) WithService(s string) *loggerBuilder {
+	b.service = s
+	return b
+}
+
+func (b *loggerBuilder) WithScmLinkToRepo(s string) *loggerBuilder {
+	b.scmLinkToRepo = s
+	return b
+}
+
+func (b *loggerBuilder) WithLogLevel(l zapcore.Level) *loggerBuilder {
+	b.logLevel = l
+	return b
+}
+
+func (b *loggerBuilder) Build() {
+	commitSha = b.version
+	scmLink = b.scmLinkToRepo
+	initLogger(b.logLevel, b.project, b.service)
 }
 
 func initLogger(level zapcore.Level, project, service string) {
