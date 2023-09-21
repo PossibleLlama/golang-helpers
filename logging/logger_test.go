@@ -21,7 +21,7 @@ func TestLoggerResponse(t *testing.T) {
 	observedLogger := zap.New(observedZapCore)
 
 	// Set defaults via init
-	InitLogger("v0.1.2", "proj", "svc")
+	InitLogger("v0.1.2", "proj", "svc", "org/repo")
 	// Replace actual logger with dummy
 	globalLogger = observedLogger
 
@@ -84,7 +84,7 @@ func TestLoggerLogs(t *testing.T) {
 		observedLogger := zap.New(observedZapCore)
 
 		// Set defaults via init
-		InitLogger("v0.1.2", "proj", "svc")
+		InitLogger("v0.1.2", "proj", "svc", "org/repo")
 		// Replace actual logger with dummy
 		globalLogger = observedLogger
 
@@ -107,7 +107,7 @@ func TestLoggerLogs(t *testing.T) {
 
 func TestLogEnablesAllLevelsOfLogs(t *testing.T) {
 	// Set defaults via init
-	InitLogger("v0.1.2", "proj", "svc")
+	InitLogger("v0.1.2", "proj", "svc", "org/repo")
 
 	assert.True(t, globalLogger.Level().Enabled(zapcore.DebugLevel), "Logger should produce debug messages")
 	assert.True(t, globalLogger.Level().Enabled(zapcore.ErrorLevel), "Logger should produce error messages")
@@ -123,75 +123,100 @@ func TestQuietLogGivesLimitedLogs(t *testing.T) {
 	assert.True(t, globalLogger.Level().Enabled(zapcore.FatalLevel), "Quiet logger should produce fatal messages")
 }
 
-func TestGithubLinkOrEmpty(t *testing.T) {
+func TestLinkOrEmpty(t *testing.T) {
 	var tests = []struct {
-		name   string
-		commit string
-		input  string
-		expect string
+		name              string
+		commit            string
+		defaultOrgAndRepo string
+		input             string
+		expect            string
 	}{
 		{
-			name:   "Empty gives empty",
-			commit: "",
-			input:  "",
-			expect: "",
+			name:              "Empty gives empty",
+			commit:            "",
+			defaultOrgAndRepo: "",
+			input:             "",
+			expect:            "",
 		}, {
-			name:   "Foo gives empty",
-			commit: "",
-			input:  "foo",
-			expect: "",
+			name:              "Foo gives empty",
+			commit:            "",
+			defaultOrgAndRepo: "",
+			input:             "foo",
+			expect:            "",
 		}, {
-			name:   "github gives empty",
-			commit: "",
-			input:  "github",
-			expect: "",
+			name:              "github gives empty",
+			commit:            "",
+			defaultOrgAndRepo: "",
+			input:             "github",
+			expect:            "",
 		}, {
-			name:   "foo/github gives empty",
-			commit: "",
-			input:  "foo/github",
-			expect: "",
+			name:              "foo/github gives empty",
+			commit:            "",
+			defaultOrgAndRepo: "",
+			input:             "foo/github",
+			expect:            "",
 		}, {
-			name:   "foo/bar/github gives empty",
-			commit: "",
-			input:  "foo/bar/github",
-			expect: "",
+			name:              "foo/bar/github gives empty",
+			commit:            "",
+			defaultOrgAndRepo: "",
+			input:             "foo/bar/github",
+			expect:            "",
 		}, {
-			name:   "/foo/github gives empty",
-			commit: "",
-			input:  "/foo/github",
-			expect: "",
+			name:              "/foo/github gives empty",
+			commit:            "",
+			defaultOrgAndRepo: "",
+			input:             "/foo/github",
+			expect:            "",
 		}, {
-			name:   "/foo/bar/github gives empty",
-			commit: "",
-			input:  "/foo/bar/github",
-			expect: "",
+			name:              "/foo/bar/github gives empty",
+			commit:            "",
+			defaultOrgAndRepo: "",
+			input:             "/foo/bar/github",
+			expect:            "",
 		}, {
-			name:   "github/org gives empty",
-			commit: "",
-			input:  "github/foo",
-			expect: "",
+			name:              "github/org gives empty",
+			commit:            "",
+			defaultOrgAndRepo: "",
+			input:             "github/foo",
+			expect:            "",
 		}, {
-			name:   "github/org/repo gives empty",
-			commit: "",
-			input:  "github/org/repo",
-			expect: "",
+			name:              "github/org/repo gives empty",
+			commit:            "",
+			defaultOrgAndRepo: "",
+			input:             "github/org/repo",
+			expect:            "",
 		}, {
-			name:   "github/org/repo/file without commit gives link to main branch",
-			commit: "",
-			input:  "github/org/repo/file",
-			expect: "https://github.com/org/repo/blob/main/file",
+			name:              "github/org/repo/file without commit gives link to main branch",
+			commit:            "",
+			defaultOrgAndRepo: "",
+			input:             "github/org/repo/file",
+			expect:            "https://github.com/org/repo/blob/main/file",
 		}, {
-			name:   "github/org/repo/file with commit gives link to specific commit",
-			commit: "abc",
-			input:  "github/org/repo/file",
-			expect: "https://github.com/org/repo/blob/abc/file",
+			name:              "github/org/repo/file with commit gives link to specific commit",
+			commit:            "abc",
+			defaultOrgAndRepo: "",
+			input:             "github/org/repo/file",
+			expect:            "https://github.com/org/repo/blob/abc/file",
+		}, {
+			name:              "override org and repo without commit gives link to main branch",
+			commit:            "",
+			defaultOrgAndRepo: "foo/bar",
+			input:             "github/org/repo/file",
+			expect:            "https://github.com/foo/bar/blob/main/file",
+		}, {
+			name:              "override org and repo with commit gives link to specific commit",
+			commit:            "abc",
+			defaultOrgAndRepo: "foo/bar",
+			input:             "github/org/repo/file",
+			expect:            "https://github.com/foo/bar/blob/abc/file",
 		},
 	}
 
 	for _, testItem := range tests {
 		t.Run(testItem.name, func(t *testing.T) {
 			commitSha = testItem.commit
-			actual := githubLinkOrEmpty(testItem.input)
+			orgAndRepo = testItem.defaultOrgAndRepo
+			actual := linkOrEmpty(testItem.input)
 
 			assert.Equal(t, testItem.expect, actual)
 		})
