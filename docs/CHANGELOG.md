@@ -1,3 +1,12 @@
+## [1.1.1](https://github.com/PossibleLlama/golang-helpers/compare/v1.1.0...v1.1.1) (2023-09-23)
+
+
+### Bug Fixes
+
+* Move readme ([97d4baa](https://github.com/PossibleLlama/golang-helpers/commit/97d4baa2c8bcd007b32a58fe6f7227794e9ba1ee))
+* Return full path after the repository name ([35032bf](https://github.com/PossibleLlama/golang-helpers/commit/35032bf802997d673b4798e186c5cb5abcf2eb7c))
+* Use HEAD over a specific branch name ([c300d9f](https://github.com/PossibleLlama/golang-helpers/commit/c300d9f8e91a0051b63947958d6ea24d6600224d))
+
 # [1.1.0](https://github.com/PossibleLlama/golang-helpers/compare/v1.0.9...v1.1.0) (2023-09-21)
 
 
