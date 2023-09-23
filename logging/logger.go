@@ -128,7 +128,7 @@ func linkOrEmpty(input string) string {
 
 	var linkLocation string
 	if commitSha == "" {
-		linkLocation = "main"
+		linkLocation = "HEAD"
 	} else {
 		linkLocation = commitSha
 	}

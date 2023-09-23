@@ -146,17 +146,23 @@ func TestLinkOrEmpty(t *testing.T) {
 			input:   "",
 			expect:  "",
 		}, {
-			name:    "Scm and single file path input gives output to main branch",
+			name:    "Scm and single file path input gives output to HEAD",
 			commit:  "",
 			scmLink: "foo",
 			input:   "repoName",
-			expect:  "foo/blob/main/",
+			expect:  "foo/blob/HEAD/",
 		}, {
-			name:    "Scm and multiple file path input gives output to main branch",
+			name:    "Scm and multiple file path input gives output to HEAD",
 			commit:  "",
 			scmLink: "foo",
 			input:   "repoName/bar",
-			expect:  "foo/blob/main/bar",
+			expect:  "foo/blob/HEAD/bar",
+		}, {
+			name:    "Scm and multiple deep file path input gives output to HEAD",
+			commit:  "",
+			scmLink: "foo",
+			input:   "repoName/bar/bang/buzz",
+			expect:  "foo/blob/HEAD/bar/bang/buzz",
 		}, {
 			name:    "Scm, commit and single file path input gives output to commit",
 			commit:  "abc123",
@@ -170,11 +176,11 @@ func TestLinkOrEmpty(t *testing.T) {
 			input:   "repoName/bar",
 			expect:  "foo/blob/abc123/bar",
 		}, {
-			name:    "Scm and multiple file path with line input gives output to main branch without line",
+			name:    "Scm and multiple file path with line input gives output to HEAD without line",
 			commit:  "",
 			scmLink: "foo",
 			input:   "repoName/bar:123",
-			expect:  "foo/blob/main/bar",
+			expect:  "foo/blob/HEAD/bar",
 		},
 	}
 
