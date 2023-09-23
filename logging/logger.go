@@ -112,7 +112,7 @@ func getEnv() string {
 
 func remoteSourceCallerEncoder(caller zapcore.EntryCaller, enc zapcore.PrimitiveArrayEncoder) {
 	var link string
-	if link = linkOrEmpty(caller.TrimmedPath()); len(link) == 0 {
+	if link = linkOrEmpty(caller.FullPath()); len(link) == 0 {
 		zapcore.ShortCallerEncoder(caller, enc)
 	} else {
 		enc.AppendString(link + "#L" + strconv.Itoa(caller.Line))
@@ -123,7 +123,9 @@ func linkOrEmpty(input string) string {
 	if scmLink == "" || input == "" {
 		return ""
 	}
-	withoutRepoName := strings.Join(strings.Split(input, "/")[1:], "/")
+	scmParts := strings.Split(scmLink, "/")
+	scmRepo := scmParts[len(scmParts)-1]
+	withoutRepoName := strings.Join(strings.Split(input, scmRepo)[1:], "/")
 	withoutLineNum := strings.Split(withoutRepoName, ":")[0]
 
 	var linkLocation string
@@ -132,7 +134,7 @@ func linkOrEmpty(input string) string {
 	} else {
 		linkLocation = commitSha
 	}
-	return scmLink + "/blob/" + linkLocation + "/" + withoutLineNum
+	return scmLink + "/blob/" + linkLocation + withoutLineNum
 }
 
 func withTrace(token string) *zap.Logger {
