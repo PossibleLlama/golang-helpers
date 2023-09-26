@@ -84,7 +84,12 @@ func initLogger(level zapcore.Level, project, service string) {
 	zapConfig.EncoderConfig.EncodeDuration = zapcore.SecondsDurationEncoder
 	zapConfig.DisableStacktrace = true
 	zapConfig.OutputPaths = []string{"stdout"}
-	zapConfig.EncoderConfig.EncodeCaller = remoteSourceCallerEncoder
+	// Doing this here prevents checking the variable every log call
+	if scmLink == "" {
+		zapConfig.EncoderConfig.EncodeCaller = zapcore.ShortCallerEncoder
+	} else {
+		zapConfig.EncoderConfig.EncodeCaller = remoteSourceCallerEncoder
+	}
 
 	zapLogger, err := zapConfig.Build(zap.Fields(
 		zap.String("project", project),
@@ -120,7 +125,7 @@ func remoteSourceCallerEncoder(caller zapcore.EntryCaller, enc zapcore.Primitive
 }
 
 func linkOrEmpty(input string) string {
-	if scmLink == "" || input == "" {
+	if input == "" {
 		return ""
 	}
 	scmParts := strings.Split(scmLink, "/")
