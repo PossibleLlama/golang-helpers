@@ -1,3 +1,11 @@
+## [1.1.2](https://github.com/PossibleLlama/golang-helpers/compare/v1.1.1...v1.1.2) (2023-09-26)
+
+
+### Bug Fixes
+
+* Improve naming of variables ([d3a36f1](https://github.com/PossibleLlama/golang-helpers/commit/d3a36f1d4f0fdb1d6c9407a485686b9d68ccb3d3))
+* Move check for empty SCM to init ([47fa2b9](https://github.com/PossibleLlama/golang-helpers/commit/47fa2b94defe9f625f9ba2120580d2092c6b31b8))
+
 ## [1.1.1](https://github.com/PossibleLlama/golang-helpers/compare/v1.1.0...v1.1.1) (2023-09-23)
 
 
