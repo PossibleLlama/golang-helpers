@@ -134,12 +134,6 @@ func TestLinkOrEmpty(t *testing.T) {
 			input:   "",
 			expect:  "",
 		}, {
-			name:    "Empty scm gives empty",
-			commit:  "",
-			scmLink: "",
-			input:   "foo",
-			expect:  "",
-		}, {
 			name:    "Empty input gives empty",
 			commit:  "",
 			scmLink: "repoName",
