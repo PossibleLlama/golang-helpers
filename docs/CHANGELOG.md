@@ -1,3 +1,10 @@
+# [1.2.0](https://github.com/PossibleLlama/golang-helpers/compare/v1.1.2...v1.2.0) (2023-12-09)
+
+
+### Features
+
+* Set duration as milliseconds ([9b563ad](https://github.com/PossibleLlama/golang-helpers/commit/9b563adcac9b21751eebafb6020c39f5f7968a20))
+
 ## [1.1.2](https://github.com/PossibleLlama/golang-helpers/compare/v1.1.1...v1.1.2) (2023-09-26)
 
 
