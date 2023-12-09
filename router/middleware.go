@@ -54,6 +54,6 @@ func LoggingMiddleware(next http.Handler) http.Handler {
 			w.Header().Get(logging.TraceToken),
 			r,
 			lw.ResponseMetadata,
-			time.Since(start))
+			time.Since(start)*time.Millisecond)
 	})
 }
