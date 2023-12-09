@@ -1,3 +1,10 @@
+## [1.2.1](https://github.com/PossibleLlama/golang-helpers/compare/v1.2.0...v1.2.1) (2023-12-09)
+
+
+### Bug Fixes
+
+* Update dependencies regularly ([39fb621](https://github.com/PossibleLlama/golang-helpers/commit/39fb621e3ccc5c793e7f5670010b2f9ed407e48d))
+
 # [1.2.0](https://github.com/PossibleLlama/golang-helpers/compare/v1.1.2...v1.2.0) (2023-12-09)
 
 
