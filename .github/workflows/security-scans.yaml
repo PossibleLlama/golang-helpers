@@ -44,7 +44,7 @@ jobs:
       - name: Upload scan results to GitHub Security tab
         # If part of a repo that allows uploading results
         if: false
-        uses: github/codeql-action/upload-sarif@v2
+        uses: github/codeql-action/upload-sarif@v3
         with:
           sarif_file: "trivy-sast.sarif"
           category: "code"
