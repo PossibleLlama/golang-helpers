@@ -30,7 +30,7 @@ jobs:
         args: --issues-exit-code=0 --out-format checkstyle -v ./... > ./lint.out
 
     - name: Store linting report
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       if: always()
       with:
         name: Linting report
@@ -58,7 +58,7 @@ jobs:
       run: gotestsum --packages="./..." --junitfile="./correctness-tests.xml" -- -coverprofile="./correctness-tests-coverage.out" -count=10 -race
 
     - name: Store test reports
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       if: always()
       with:
         name: Test small reports
@@ -89,7 +89,7 @@ jobs:
       run: go test -bench="." -count=10 ./... > ./performance-tests.txt
 
     - name: Store test reports
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       if: always()
       with:
         name: Test small performance reports
