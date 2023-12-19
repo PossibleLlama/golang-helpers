@@ -18,6 +18,6 @@ jobs:
 
   security:
     name: Security checks
-    uses: PossibleLlama/workflows/.github/workflows/golang-security.yaml@v0.2.2
+    uses: PossibleLlama/workflows/.github/workflows/golang-security.yaml@v0.2.10
     with:
       upload-sarif: false
