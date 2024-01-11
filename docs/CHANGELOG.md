@@ -1,3 +1,10 @@
+## [1.2.2](https://github.com/PossibleLlama/golang-helpers/compare/v1.2.1...v1.2.2) (2024-01-11)
+
+
+### Bug Fixes
+
+* Move security check to PR ([0949202](https://github.com/PossibleLlama/golang-helpers/commit/09492021aeb28c652c0eaeca76b33da9ba25ea76))
+
 ## [1.2.1](https://github.com/PossibleLlama/golang-helpers/compare/v1.2.0...v1.2.1) (2023-12-09)
 
 
