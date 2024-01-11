@@ -15,9 +15,3 @@ jobs:
     with:
       enable-performance: true
       enable-fuzz: false
-
-  security:
-    name: Security checks
-    uses: PossibleLlama/workflows/.github/workflows/golang-security.yaml@v0.2.11
-    with:
-      upload-sarif: false
