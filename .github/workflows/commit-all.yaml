@@ -5,19 +5,19 @@ on: push
 jobs:
   linting:
     name: Linting
-    uses: PossibleLlama/workflows/.github/workflows/golang-linting.yaml@v0.2.10
+    uses: PossibleLlama/workflows/.github/workflows/golang-linting.yaml@v0.2.11
     with:
       source-path: "./..."
 
   test-small:
     name: Test small
-    uses: PossibleLlama/workflows/.github/workflows/golang-testing-small.yaml@v0.2.10
+    uses: PossibleLlama/workflows/.github/workflows/golang-testing-small.yaml@v0.2.11
     with:
       enable-performance: true
       enable-fuzz: false
 
   security:
     name: Security checks
-    uses: PossibleLlama/workflows/.github/workflows/golang-security.yaml@v0.2.2
+    uses: PossibleLlama/workflows/.github/workflows/golang-security.yaml@v0.2.11
     with:
       upload-sarif: false
