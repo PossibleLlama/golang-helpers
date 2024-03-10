@@ -1,3 +1,10 @@
+## [1.2.3](https://github.com/PossibleLlama/golang-helpers/compare/v1.2.2...v1.2.3) (2024-03-10)
+
+
+### Bug Fixes
+
+* Update dependabot settings ([f85410f](https://github.com/PossibleLlama/golang-helpers/commit/f85410f6b84a802fd95e73a22937bdb20c61d482))
+
 ## [1.2.2](https://github.com/PossibleLlama/golang-helpers/compare/v1.2.1...v1.2.2) (2024-01-11)
 
 
