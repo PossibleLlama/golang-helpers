@@ -1,6 +1,6 @@
 module github.com/PossibleLlama/golang-helpers
 
-go 1.21.5
+go 1.26
 
 require (
 	github.com/stretchr/testify v1.11.1
