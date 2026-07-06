@@ -12,7 +12,7 @@ jobs:
     name: Security checks
     permissions:
       security-events: write
-    uses: PossibleLlama/workflows/.github/workflows/golang-security.yaml@v0.2.15
+    uses: PossibleLlama/workflows/.github/workflows/golang-security.yaml@v0.2.21
     with:
       upload-sarif: true
 
@@ -26,10 +26,10 @@ jobs:
     steps:
 
     - name: Check out code into the Go module directory
-      uses: actions/checkout@v4
+      uses: actions/checkout@v7
 
     - name: Setup Node
-      uses: actions/setup-node@v4
+      uses: actions/setup-node@v6
       with:
         node-version: "lts/*"
 
