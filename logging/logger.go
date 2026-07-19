@@ -3,11 +3,13 @@ package logging
 import (
 	"crypto/sha512"
 	"encoding/base64"
+	"errors"
 	"fmt"
 	"net/http"
 	"os"
 	"strconv"
 	"strings"
+	"syscall"
 	"time"
 
 	"go.uber.org/zap"
@@ -103,7 +105,9 @@ func initLogger(level zapcore.Level, project, service string) {
 		os.Exit(1)
 	}
 	defer func() {
-		_ = zapLogger.Sync()
+		if err := zapLogger.Sync(); err != nil && !errors.Is(err, syscall.EINVAL) && !errors.Is(err, syscall.ENOTTY) {
+			fmt.Println("failed to sync logger:", err)
+		}
 	}()
 
 	globalLogger = zapLogger
