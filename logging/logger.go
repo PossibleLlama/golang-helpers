@@ -102,7 +102,9 @@ func initLogger(level zapcore.Level, project, service string) {
 		fmt.Println("failed to initialize logger:", err)
 		os.Exit(1)
 	}
-	defer zapLogger.Sync()
+	defer func() {
+		_ = zapLogger.Sync()
+	}()
 
 	globalLogger = zapLogger
 }
