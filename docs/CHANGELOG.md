@@ -1,3 +1,11 @@
+## [1.2.4](https://github.com/PossibleLlama/golang-helpers/compare/v1.2.3...v1.2.4) (2026-07-19)
+
+
+### Bug Fixes
+
+* handle logger sync result for errcheck ([b4565c2](https://github.com/PossibleLlama/golang-helpers/commit/b4565c2073d6d68e94f2007ebe189d0c8dd75fcd))
+* report non-benign logger sync errors ([0595d26](https://github.com/PossibleLlama/golang-helpers/commit/0595d2650f63cffab938f8738918cf246fe8411a))
+
 ## [1.2.3](https://github.com/PossibleLlama/golang-helpers/compare/v1.2.2...v1.2.3) (2024-03-10)
 
 
